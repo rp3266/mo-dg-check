@@ -3,40 +3,37 @@ import re
 import pandas as pd
 import streamlit as st
 
-def check_password():
-    """Returns `True` if the user provided a correct username and password."""
-    def password_entered():
-        username = st.session_state["username"]
-        password = st.session_state["password"]
-        
-        if username in st.secrets["passwords"] and password == st.secrets["passwords"][username]:
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]  # Don't keep password in state
-            del st.session_state["username"]
-        else:
-            st.session_state["password_correct"] = False
-
-    if "password_correct" not in st.session_state:
-        # First run, show input form
-        st.text_input("Username", key="username")
-        st.text_input("Password", type="password", key="password")
-        st.button("Log In", on_click=password_entered)
-        return False
-    elif not st.session_state["password_correct"]:
-        # Incorrect credentials
-        st.text_input("Username", key="username")
-        st.text_input("Password", type="password", key="password")
-        st.button("Log In", on_click=password_entered)
-        st.error("😕 User or password incorrect")
-        return False
-    else:
-        # Credentials correct
-        return True
-
-if check_password():
 st.set_page_config(
     page_title="澳門受管制危險品查詢系統", page_icon="🔍", layout="wide"
 )
+
+# ==================== 🔐 密碼驗證區塊 ====================
+def check_password():
+    if st.session_state.get("password_correct", False):
+        return True
+
+    st.markdown("## 🔒 澳門受管制危險品查詢系統")
+    st.caption("本系統受密碼保護，請輸入授權密碼以繼續。")
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        with st.form("login_form"):
+            password_input = st.text_input("存取密碼：", type="password")
+            submit_pass = st.form_submit_button("🔓 登入系統", use_container_width=True)
+
+        if submit_pass:
+            # 💡 請將 "YourSecretPassword123" 替換為您的自訂密碼
+            if password_input == "YourSecretPassword123":
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("❌ 密碼錯誤，請重新輸入！")
+
+    return False
+
+if not check_password():
+    st.stop()
+# =========================================================
 
 
 @st.cache_data
@@ -139,6 +136,12 @@ df, nos_un_set, nos_update_date = load_data()
 
 # --- 側邊欄導覽選單 ---
 st.sidebar.title("功能導覽")
+
+# 可選：在側邊欄加入登出按鈕
+if st.sidebar.button("🔒 登出系統", use_container_width=True):
+    st.session_state["password_correct"] = False
+    st.rerun()
+
 page = st.sidebar.radio(
     "請選擇功能頁面：",
     ["檢索方式一", "檢索方式二(原生)", "檢索方式三", "NOS物質查詢"],
