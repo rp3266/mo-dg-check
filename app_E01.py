@@ -38,8 +38,8 @@ def check_password():
         return True
 
 if check_password():
-   @st.cache_data
-    
+
+@st.cache_data
 def load_data():
     # 1. 載入主數據庫（受管制危險品清單）
     try:
