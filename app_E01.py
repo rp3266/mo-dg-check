@@ -7,10 +7,14 @@ st.set_page_config(
     page_title="澳門受管制危險品查詢系統", page_icon="🔍", layout="wide"
 )
 
-# ==================== 🔐 密碼驗證區塊 ====================
+# ==================== 🔐 密碼驗證區塊 (使用 st.secrets) ====================
 def check_password():
     if st.session_state.get("password_correct", False):
         return True
+
+    if "APP_PASSWORD" not in st.secrets:
+        st.error("⚠️ 未找到密碼設定！請於 .streamlit/secrets.toml 設定 APP_PASSWORD。")
+        return False
 
     st.markdown("## 🔒 澳門受管制危險品查詢系統")
     st.caption("本系統受密碼保護，請輸入授權密碼以繼續。")
@@ -22,8 +26,7 @@ def check_password():
             submit_pass = st.form_submit_button("🔓 登入系統", use_container_width=True)
 
         if submit_pass:
-            # 💡 請將 "YourSecretPassword123" 替換為您的自訂密碼
-            if password_input == "YourSecretPassword123":
+            if password_input == st.secrets["APP_PASSWORD"]:
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
@@ -33,7 +36,7 @@ def check_password():
 
 if not check_password():
     st.stop()
-# =========================================================
+# ==============================================================================
 
 
 @st.cache_data
@@ -137,7 +140,6 @@ df, nos_un_set, nos_update_date = load_data()
 # --- 側邊欄導覽選單 ---
 st.sidebar.title("功能導覽")
 
-# 可選：在側邊欄加入登出按鈕
 if st.sidebar.button("🔒 登出系統", use_container_width=True):
     st.session_state["password_correct"] = False
     st.rerun()
