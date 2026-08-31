@@ -3,6 +3,10 @@ import re
 import pandas as pd
 import streamlit as st
 
+st.set_page_config(
+    page_title="澳門受管制危險品查詢系統", page_icon="🔍", layout="wide"
+)
+
 def check_password():
     """Returns `True` if the user provided a correct username and password."""
     def password_entered():
@@ -34,12 +38,8 @@ def check_password():
         return True
 
 if check_password():
-st.set_page_config(
-    page_title="澳門受管制危險品查詢系統", page_icon="🔍", layout="wide"
-)
-
-
-@st.cache_data
+   @st.cache_data
+    
 def load_data():
     # 1. 載入主數據庫（受管制危險品清單）
     try:
