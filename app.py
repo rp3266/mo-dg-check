@@ -115,7 +115,7 @@ def load_data():
     nos_un_set = set()
     try:
         df_nos_raw = pd.read_excel(
-            "MO DG Law_v02.xlsx", sheet_name="受管制NOS物質清單", header=None
+            "MO DG Law.xlsx", sheet_name="受管制NOS物質清單", header=None
         )
         if len(df_nos_raw) > 0:
             raw_date = str(df_nos_raw.iloc[0, 0]).strip()
