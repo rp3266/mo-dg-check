@@ -43,9 +43,9 @@ if not check_password():
 def load_data():
     # 1. 載入主數據庫（受管制危險品清單）
     try:
-        df = pd.read_excel("MO DG Law_v03.xlsx", sheet_name="受管制危險品清單")
+        df = pd.read_excel("MO DG Law.xlsx", sheet_name="受管制危險品清單")
     except Exception as e:
-        st.error(f"無法載入數據檔案 MO DG Law_v03.xlsx (受管制危險品清單): {e}")
+        st.error(f"無法載入數據檔案 MO DG Law.xlsx (受管制危險品清單): {e}")
         st.stop()
 
     df = df.fillna("")
